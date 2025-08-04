@@ -4,14 +4,24 @@
   "description": "Backend service to process, retrieve and store vehicular log data",
   "main": "src/server.mts",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "nodemon --loader ts-node/esm src/server.mts"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/express": "^5.0.3",
     "@types/node": "^24.2.0",
+    "nodemon": "^3.1.10",
     "ts-node": "^10.9.2",
     "typescript": "^5.9.2"
+  },
+  "dependencies": {
+    "express": "^5.1.0",
+    "joi": "^18.0.0",
+    "morgan": "^1.10.1",
+    "winston": "^3.17.0"
   }
 }
