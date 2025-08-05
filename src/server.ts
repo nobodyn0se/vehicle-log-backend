@@ -1,6 +1,6 @@
 import express from 'express';
-import logger from './middleware/logger';
-import { vehicleLogParser } from './service/log-parser';
+import logger from './middleware/logger.ts';
+import { vehicleLogParser } from './service/log-parser.ts';
 
 const app = express();
 
