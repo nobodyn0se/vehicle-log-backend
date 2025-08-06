@@ -15,3 +15,5 @@ export const createVehicleLogTableQuery = `CREATE TABLE IF NOT EXISTS vehicle_lo
     updated_at timestamp,
 );
 `;
+
+export const baseSearchQuery = 'SELECT * from vehicle_logs WHERE ';
