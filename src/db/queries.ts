@@ -6,7 +6,7 @@ export const useKeySpaceQuery = `USE vehicle_keyspace`;
 
 export const createVehicleLogTableQuery = `CREATE TABLE IF NOT EXISTS vehicle_logs (
     log_id uuid PRIMARY KEY,
-    log_timestamp text,
+    log_timestamp timestamp,
     vehicle_id text,
     log_level text,
     code text,

@@ -2,7 +2,7 @@ export {};
 
 declare global {
     type VehicleLogData = {
-        timestamp: string;
+        timestamp: Date;
         vehicleId: string;
         logLevel: string;
         code: string;

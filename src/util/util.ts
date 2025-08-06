@@ -1,5 +1,5 @@
 export const validateLogDataFormat = (inputLogData: any): inputLogData is VehicleLogData => {
-    return typeof inputLogData.timestamp === 'string' &&
+    return inputLogData.timestamp instanceof Date && !isNaN(inputLogData.timestamp.getTime()) &&
         typeof inputLogData.vehicleId === 'string' &&
         typeof inputLogData.logLevel === 'string' &&
         typeof inputLogData.code === 'string' &&
