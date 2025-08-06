@@ -1,0 +1,1 @@
+export const insertVehicleLogQuery = 'INSERT INTO logs (id, timestamp, vehicle_id, log_level, code, message) VALUES (uuid(), ?, ?, ?, ?, ?)';
