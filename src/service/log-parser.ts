@@ -22,8 +22,9 @@ export const vehicleLogParser = async (filePath: string, logger: winston.Logger)
       const match = trimmedLine.match(/\[([^\]]+)] \[([^\]]+)] \[([^\]]+)] \[CODE:([^\]]+)] \[(.*)]/);
 
       if (match) {
-        const [, timestamp, vehicleId, logLevel, code, message] = match;
+        const [, rawTimestamp, vehicleId, logLevel, code, message] = match;
 
+        const timestamp = convertStringToDateTime(rawTimestamp);
         const logData = {timestamp, vehicleId, logLevel, code, message};
 
         if(validateLogDataFormat(logData)) {
