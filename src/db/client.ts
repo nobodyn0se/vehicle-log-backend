@@ -1,9 +1,9 @@
 import {Client} from 'cassandra-driver';
-import {insertVehicleLogQuery} from "./queries.ts";
+import {createKeySpaceQuery, createVehicleLogTableQuery, insertVehicleLogQuery, useKeySpaceQuery} from "./queries.ts";
 import logger from "../middleware/logger.ts";
 
 const client = new Client({
-    contactPoints: ['127.0.0.1'], // Change this if your Cassandra instance is hosted elsewhere
+    contactPoints: ['127.0.0.1:9042'], // Change this if your Cassandra instance is hosted elsewhere
     localDataCenter: 'datacenter1', // Adjust based on your setup
 });
 
@@ -16,8 +16,34 @@ export const connectCassandra = async (client: Client) => {
     }
 };
 
-export const insertVehicleLog = async (client: Client, logData: VehicleLogData) => {
+export const createKeySpace = async(client: Client) => {
+    try {
+        await client.execute(createKeySpaceQuery);
+        logger.info('Key space created or already exists');
+    } catch (error) {
+        logger.error('Error creating keyspace', error);
+    }
+};
 
+export const useKeySpace = async(client: Client) => {
+    try {
+        await client.execute(useKeySpaceQuery);
+        logger.info('Using keyspace for vehicles');
+    } catch (error) {
+        logger.error('Error using keyspace', error);
+    }
+}
+
+export const createLogTable = async (client: Client) => {
+    try {
+        await client.execute(createVehicleLogTableQuery);
+        logger.info('Vehicle log table created or already exists');
+    } catch (error) {
+        logger.error('Error creating log table', error);
+    }
+};
+
+export const insertVehicleLog = async (client: Client, logData: VehicleLogData) => {
     try {
         await client.execute(insertVehicleLogQuery, [logData.timestamp, logData.vehicleId, logData.logLevel, logData.code, logData.message], {prepare: true});
     } catch (error) {
