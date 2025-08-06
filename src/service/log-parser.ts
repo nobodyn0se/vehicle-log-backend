@@ -2,7 +2,9 @@ import fs from 'fs';
 import readline from 'readline';
 import winston from "winston";
 import client, {insertVehicleLog} from "../db/client.ts";
-import {validateLogDataFormat} from "../util/util.ts";
+import {convertStringToDateTime, validateLogDataFormat} from "../util/util.ts";
+
+let logBatchSize = 2000;
 
 export const vehicleLogParser = async (filePath: string, logger: winston.Logger) => {
     const fileStream = fs.createReadStream(filePath);
@@ -31,6 +33,10 @@ export const vehicleLogParser = async (filePath: string, logger: winston.Logger)
             i-- > 0 && logger.info(`${timestamp}, ${vehicleId}, ${logLevel}, ${code}, ${message}`);
             await insertVehicleLog(client, logData);
             ++records;
+
+            if(records % logBatchSize === 0) {
+                logger.info(`${records} records inserted into DB`);
+            }
         } else {
             logger.error('Invalid log data cannot be inserted into DB');
         }
