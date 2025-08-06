@@ -3,7 +3,7 @@ import { validateLogDataFormat } from '../../src/util/util.ts'; // Adjust the im
 describe('Log Data validator tests', () => {
 
     it('should return true for valid log data', () => {
-        const validLogData = {
+        const validLogData : VehicleLogData = {
             timestamp: '2025-08-06T12:00:00Z',
             vehicleId: '12345',
             logLevel: 'INFO',
@@ -50,7 +50,7 @@ describe('Log Data validator tests', () => {
             message: 'This is a log message',
         };
 
-        const result = validateLogDataFormat(invalidLogData as any);
+        const result = validateLogDataFormat(invalidLogData);
         expect(result).toBe(false);
     });
 
@@ -63,7 +63,7 @@ describe('Log Data validator tests', () => {
             message: 'This is a log message',
         };
 
-        const result = validateLogDataFormat(invalidLogData as any);
+        const result = validateLogDataFormat(invalidLogData);
         expect(result).toBe(false);
     });
 
@@ -76,7 +76,7 @@ describe('Log Data validator tests', () => {
             message: 12345, // Invalid: should be a string
         };
 
-        const result = validateLogDataFormat(invalidLogData as any)
+        const result = validateLogDataFormat(invalidLogData)
         expect(result).toBe(false);
     });
 
@@ -89,7 +89,7 @@ describe('Log Data validator tests', () => {
             // Missing code
         };
 
-        const result = validateLogDataFormat(invalidLogData as any);
+        const result = validateLogDataFormat(invalidLogData);
 
         expect(result).toBe(false);
     });
