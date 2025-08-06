@@ -4,7 +4,7 @@ describe('Log Data validator tests', () => {
 
     it('should return true for valid log data', () => {
         const validLogData : VehicleLogData = {
-            timestamp: '2025-08-06T12:00:00Z',
+            timestamp: new Date('2025-08-06 12:00:00'),
             vehicleId: '12345',
             logLevel: 'INFO',
             code: 'CODE123',
@@ -15,7 +15,7 @@ describe('Log Data validator tests', () => {
         expect(result).toBe(true);
     });
 
-    it('should return false if timestamp is not a string', () => {
+    it('should return false if timestamp is not a Date', () => {
         const invalidLogData = {
             timestamp: 12345,
             vehicleId: "12345",
@@ -43,8 +43,8 @@ describe('Log Data validator tests', () => {
 
     it('should return false if logLevel is not a string', () => {
         const invalidLogData = {
-            timestamp: '2025-08-06T12:00:00Z',
-            vehicleId: 12345,
+            timestamp: new Date('2025-08-06T12:00:00Z'),
+            vehicleId: '12345',
             logLevel: 123,
             code: 'CODE123',
             message: 'This is a log message',
@@ -56,8 +56,8 @@ describe('Log Data validator tests', () => {
 
     it('should return false if code is not a string', () => {
         const invalidLogData = {
-            timestamp: '2025-08-06T12:00:00Z',
-            vehicleId: 12345,
+            timestamp: new Date('2025-08-06 12:00:00'),
+            vehicleId: '12345',
             logLevel: 'INFO',
             code: 123, // Invalid: should be a string
             message: 'This is a log message',
@@ -69,8 +69,8 @@ describe('Log Data validator tests', () => {
 
     it('should return false if message is not a string', () => {
         const invalidLogData = {
-            timestamp: '2025-08-06T12:00:00Z',
-            vehicleId: 12345,
+            timestamp: new Date('2025-08-06 12:00:00'),
+            vehicleId: '12345',
             logLevel: 'INFO',
             code: 'CODE123',
             message: 12345, // Invalid: should be a string
@@ -82,8 +82,8 @@ describe('Log Data validator tests', () => {
 
     it('should return false if any required field is missing', () => {
         const invalidLogData = {
-            timestamp: '2025-08-06T12:00:00Z',
-            vehicleId: 12345,
+            timestamp: new Date('2025-08-06 12:00:00'),
+            vehicleId: '12345',
             logLevel: 'INFO',
             message: 'This is a log message',
             // Missing code
