@@ -65,7 +65,7 @@ export const populateDBIfEmpty = async (client: Client) => {
             logger.info('Database is empty, populating data...');
             await vehicleLogParser('data/vehicle_diagnostics_logs.txt', logger);
         } else {
-            logger.info('Vehicle log table populated or already exists');
+            logger.info('Vehicle log table already populated, skipped inserts...');
         }
     } catch(error) {
         logger.error('Could not get database status', error);
