@@ -7,7 +7,7 @@ import {
     useKeySpaceQuery
 } from "./queries.ts";
 import logger from "../middleware/logger.ts";
-import {vehicleLogParser} from "../service/log-parser.js";
+import {vehicleLogParser} from "../service/log-parser.ts";
 
 const client = new Client({
     contactPoints: ['127.0.0.1:9042'], // Change this if your Cassandra instance is hosted elsewhere
