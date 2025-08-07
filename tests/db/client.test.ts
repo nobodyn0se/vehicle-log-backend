@@ -3,6 +3,7 @@ import {connectCassandra, insertVehicleLog, populateDBIfEmpty} from "../../src/d
 import logger from '../../src/middleware/logger.ts';
 import {vehicleLogParser} from "../../src/service/log-parser.ts";
 import {getCountQuery} from "../../src/db/queries.ts";
+import {mock} from "node:test";
 
 jest.mock('../../src/middleware/logger.ts');
 jest.mock('../../src/service/log-parser.ts', () => ({
@@ -99,5 +100,27 @@ describe('DB Client tests', () => {
        expect(mockExecute).toHaveBeenCalledWith(getCountQuery);
        expect(vehicleLogParser).toHaveBeenCalledWith('data/vehicle_diagnostics_logs.txt', mockedLogger);
        expect(mockedLogger.info).toHaveBeenCalledWith('Database is empty, populating data...');
+    });
+
+    it('should not populate the DB if there are records already present', async () => {
+        mockExecute.mockResolvedValueOnce({ rows: [{count: '1000'}]});
+
+        await populateDBIfEmpty(mockClient);
+
+        expect(mockExecute).toHaveBeenCalledWith(getCountQuery);
+        expect(vehicleLogParser).not.toHaveBeenCalled();
+        expect(mockedLogger.info).toHaveBeenCalledWith('Vehicle log table already populated, skipped inserts...');
+    });
+
+    it('should throw an error if it could not get DB count', async () =>{
+       const dbCountError = new Error('Could not get count from DB');
+       mockExecute.mockRejectedValueOnce(dbCountError);
+
+       await populateDBIfEmpty(mockClient);
+
+       expect(mockExecute).toHaveBeenCalledWith(getCountQuery);
+       expect(vehicleLogParser).not.toHaveBeenCalled();
+       expect(mockedLogger.info).not.toHaveBeenCalled();
+       expect(mockedLogger.error).toHaveBeenCalledTimes(1);
     });
 })
