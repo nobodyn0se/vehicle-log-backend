@@ -34,20 +34,20 @@ describe('Log Controller Tests', () => {
 
     it('should call the database with valid query parameters', async () => {
         // Mock the database response
-        const mockResult = { rows: [{ vehicle_id: '1013', code: 'U0420', message: 'Error' }] };
+        const mockResult = { rows: [{"log_timestamp":"2025-01-03T05:35:50.000Z","vehicle_id":"1011","log_level":"WARN","code":"P0301","message":"Cylinder 1 misfire detected"}] };
         (client.execute as jest.Mock).mockResolvedValue(mockResult);
 
         // Make a request with vehicleId and code
         const response = await request(app)
             .get('/logs')
-            .query({ vehicle: '1013', code: 'U0420' });
+            .query({ vehicle: '1011', code: 'P0301' });
 
         // Assertions
         expect(response.status).toBe(200);
-        expect(JSON.parse(response.text)).toEqual(mockResult);
+        expect(response.body).toEqual(mockResult.rows);
         expect(client.execute).toHaveBeenCalledWith(
             expect.stringContaining('SELECT'),
-            expect.arrayContaining(['1013', 'U0420'])
+            expect.arrayContaining(['1011', 'P0301'])
         );
         expect(logger.info).toHaveBeenCalledWith('Fetched results for received query');
     });
