@@ -24,7 +24,7 @@ export const logController = async (req: Request, res: Response) => {
     try {
         const result = await client.execute(finalQuery, params);
         logger.info('Fetched results for received query');
-        res.status(200).send(JSON.stringify(result));
+        res.status(200).json(result.rows);
     } catch (error) {
         res.status(500).send('Something went wrong');
     }
