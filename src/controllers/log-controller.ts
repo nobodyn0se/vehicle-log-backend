@@ -18,6 +18,11 @@ export const logController = async (req: Request, res: Response) => {
         res.status(400).send('Provide one of these - vehicle ID, error code or dates');
     }
 
+    if((fromDate && !toDate) || (!fromDate && toDate)) {
+        logger.warn('Need both from and to dates to get results');
+        res.status(400).send('Provide both from and to dates');
+    }
+
     const searchFilters = { vehicleId, code, fromDate, toDate };
     const {finalQuery, params} = searchQueryBuilder(searchFilters);
 
