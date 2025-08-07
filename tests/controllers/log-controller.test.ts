@@ -65,4 +65,17 @@ describe('Log Controller Tests', () => {
         expect(response.status).toBe(500);
         expect(response.text).toBe('Something went wrong');
     });
+
+    it('should return 400 if either dates is not specified', async () => {
+        let response = await request(app).get('/logs').query({ from: "2025-05-30" });
+
+        expect(response.status).toBe(400);
+        expect(response.text).toBe('Provide both from and to dates');
+
+        response = await request(app).get('/logs').query({ to: "2025-05-30" });
+
+        expect(response.status).toBe(400);
+        expect(response.text).toBe('Provide both from and to dates');
+    });
+
 })
