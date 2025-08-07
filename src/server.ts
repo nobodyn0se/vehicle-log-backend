@@ -3,6 +3,7 @@ import logger from './middleware/logger.ts';
 import { vehicleLogParser } from './service/log-parser.ts';
 import client, {connectCassandra, createKeySpace, createLogTable, populateDBIfEmpty, useKeySpace} from "./db/client.ts";
 import router from "./routes/general-routes.ts";
+import {createCountTableQuery} from "./db/queries.js";
 
 const app = express();
 
@@ -16,6 +17,7 @@ app.listen(PORT, async () => {
     await createKeySpace(client);
     await useKeySpace(client);
     await createLogTable(client);
+    await client.execute(createCountTableQuery);
     await populateDBIfEmpty(client);
 })
 

@@ -1,7 +1,7 @@
 import fs from 'fs';
 import readline from 'readline';
 import winston from "winston";
-import client, {insertVehicleLog} from "../db/client.ts";
+import client, {insertVehicleLog, updateRecordCount} from "../db/client.ts";
 import {convertStringToDateTime, validateLogDataFormat} from "../util/util.ts";
 
 let logBatchSize = 2000;
@@ -33,6 +33,7 @@ export const vehicleLogParser = async (filePath: string, logger: winston.Logger)
             i-- > 0 && logger.info(`${timestamp}, ${vehicleId}, ${logLevel}, ${code}, ${message}`);
             await insertVehicleLog(client, logData);
             ++records;
+            await updateRecordCount(client);
 
             if(records % logBatchSize === 0) {
                 logger.info(`${records} records inserted into DB`);
