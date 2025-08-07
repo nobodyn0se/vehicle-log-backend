@@ -1,6 +1,13 @@
 import {Client} from 'cassandra-driver';
-import {createKeySpaceQuery, createVehicleLogTableQuery, insertVehicleLogQuery, useKeySpaceQuery} from "./queries.ts";
+import {
+    createKeySpaceQuery,
+    createVehicleLogTableQuery,
+    getCountQuery,
+    insertVehicleLogQuery,
+    useKeySpaceQuery
+} from "./queries.ts";
 import logger from "../middleware/logger.ts";
+import {vehicleLogParser} from "../service/log-parser.js";
 
 const client = new Client({
     contactPoints: ['127.0.0.1:9042'], // Change this if your Cassandra instance is hosted elsewhere
@@ -48,6 +55,20 @@ export const insertVehicleLog = async (client: Client, logData: VehicleLogData) 
         await client.execute(insertVehicleLogQuery, [logData.timestamp, logData.vehicleId, logData.logLevel, logData.code, logData.message], {prepare: true});
     } catch (error) {
         logger.error('Could not insert vehicle log', error);
+    }
+}
+
+export const populateDBIfEmpty = async (client: Client) => {
+    try {
+        const result = await client.execute(getCountQuery);
+        if(parseInt(result.rows[0]['count']) === 0) {
+            logger.info('Database is empty, populating data...');
+            await vehicleLogParser('data/vehicle_diagnostics_logs.txt', logger);
+        } else {
+            logger.info('Vehicle log table populated or already exists');
+        }
+    } catch(error) {
+        logger.error('Could not get database status', error);
     }
 }
 
