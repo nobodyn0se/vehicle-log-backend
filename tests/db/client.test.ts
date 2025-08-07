@@ -1,8 +1,13 @@
 import type {Client} from 'cassandra-driver';
-import {connectCassandra, insertVehicleLog} from "../../src/db/client.ts";
+import {connectCassandra, insertVehicleLog, populateDBIfEmpty} from "../../src/db/client.ts";
 import logger from '../../src/middleware/logger.ts';
+import {vehicleLogParser} from "../../src/service/log-parser.ts";
+import {getCountQuery} from "../../src/db/queries.ts";
 
 jest.mock('../../src/middleware/logger.ts');
+jest.mock('../../src/service/log-parser.ts', () => ({
+    vehicleLogParser: jest.fn(),
+}));
 
 describe('DB Client tests', () => {
     const mockConnect = jest.fn();
@@ -16,7 +21,7 @@ describe('DB Client tests', () => {
     const mockedLogger = logger as jest.Mocked<typeof logger>;
 
     const logData = {
-        timestamp: "2025-01-01 00:00:25",
+        timestamp: new Date("2025-01-01 00:00:25"),
         vehicleId: "1013",
         logLevel: "WARN",
         code: "U0420",
@@ -75,13 +80,24 @@ describe('DB Client tests', () => {
         expect(mockedLogger.error).toHaveBeenCalledTimes(1);
     });
 
-    // it('should throw an error when invalid data is inserted', async () => {
-    //     const invalidDataError = new Error('Invalid data insertion attempt');
-    //     mockExecute.mockRejectedValueOnce(invalidDataError);
-    //
-    //     await insertVehicleLog(mockClient, invalidLogData);
-    //
-    //     expect(mockClient.execute).toHaveBeenCalled();
-    //     expect(mockedLogger.error).toHaveBeenCalledTimes(1);
-    // })
+    it('should throw an error when invalid data is inserted', async () => {
+        const invalidDataError = new Error('Invalid data insertion attempt');
+        mockExecute.mockRejectedValueOnce(invalidDataError);
+
+        await insertVehicleLog(mockClient, invalidLogData);
+
+        expect(mockClient.execute).toHaveBeenCalled();
+        expect(mockedLogger.error).toHaveBeenCalledTimes(1);
+    });
+
+    it('should populate the empty DB succesfully', async () => {
+       mockExecute.mockResolvedValueOnce({ rows: [{count: '0'}]});
+       (vehicleLogParser as jest.Mock).mockResolvedValueOnce(undefined);
+
+       await populateDBIfEmpty(mockClient);
+
+       expect(mockExecute).toHaveBeenCalledWith(getCountQuery);
+       expect(vehicleLogParser).toHaveBeenCalledWith('data/vehicle_diagnostics_logs.txt', mockedLogger);
+       expect(mockedLogger.info).toHaveBeenCalledWith('Database is empty, populating data...');
+    });
 })
