@@ -18,4 +18,10 @@ export const createVehicleLogTableQuery = `CREATE TABLE IF NOT EXISTS vehicle_lo
 
 export const baseSearchQuery = 'SELECT log_timestamp, vehicle_id, log_level, code, message from vehicle_logs WHERE ';
 
-export const getCountQuery = 'SELECT COUNT(*) from vehicle_logs;'
+export const getCountQuery = `SELECT count_value from vehicle_logs_count where key = 'count';`
+
+export const initCountRowQuery = `UPDATE vehicle_logs_count SET count_value = count_value + 0 WHERE key = 'count'`;
+
+export const updateCountQuery = `UPDATE vehicle_logs_count SET count_value = count_value + 1 where key = 'count'`;
+
+export const createCountTableQuery = `CREATE TABLE IF NOT EXISTS vehicle_logs_count (key text primary key, count_value counter);`

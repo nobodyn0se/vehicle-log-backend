@@ -2,8 +2,8 @@ import {Client} from 'cassandra-driver';
 import {
     createKeySpaceQuery,
     createVehicleLogTableQuery,
-    getCountQuery,
-    insertVehicleLogQuery,
+    getCountQuery, initCountRowQuery,
+    insertVehicleLogQuery, updateCountQuery,
     useKeySpaceQuery
 } from "./queries.ts";
 import logger from "../middleware/logger.ts";
@@ -60,8 +60,9 @@ export const insertVehicleLog = async (client: Client, logData: VehicleLogData) 
 
 export const populateDBIfEmpty = async (client: Client) => {
     try {
+        await client.execute(initCountRowQuery);
         const result = await client.execute(getCountQuery);
-        if(parseInt(result.rows[0]['count']) === 0) {
+        if(parseInt(result.rows[0]['count_value']) === 0) {
             logger.info('Database is empty, populating data...');
             await vehicleLogParser('data/vehicle_diagnostics_logs.txt', logger);
         } else {
@@ -69,6 +70,14 @@ export const populateDBIfEmpty = async (client: Client) => {
         }
     } catch(error) {
         logger.error('Could not get database status', error);
+    }
+}
+
+export const updateRecordCount = async (client: Client) => {
+    try {
+        await client.execute(updateCountQuery);
+    } catch(error) {
+        logger.error('Could not update count', error);
     }
 }
 
