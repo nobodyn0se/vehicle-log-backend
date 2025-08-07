@@ -16,6 +16,6 @@ export const createVehicleLogTableQuery = `CREATE TABLE IF NOT EXISTS vehicle_lo
 );
 `;
 
-export const baseSearchQuery = 'SELECT * from vehicle_logs WHERE ';
+export const baseSearchQuery = 'SELECT log_timestamp, vehicle_id, log_level, code, message from vehicle_logs WHERE ';
 
 export const getCountQuery = 'SELECT COUNT(*) from vehicle_logs;'
