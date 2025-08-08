@@ -1,0 +1,86 @@
+openapi: 3.0.0
+info:
+  title: Vehicle Logs API
+  description: API to fetch vehicle log data based on filters like vehicle ID, error code, and date range.
+  version: 1.0.0
+paths:
+  /logs:
+    get:
+      summary: Fetch logs based on filters
+      description: Fetches logs filtered by vehicle ID, error code, and date range, using the `vehicle_logs` table.
+      parameters:
+        - name: vehicle
+          in: query
+          description: Vehicle ID to filter logs.
+          required: false
+          schema:
+            type: string
+        - name: code
+          in: query
+          description: Error code to filter logs.
+          required: false
+          schema:
+            type: string
+        - name: from
+          in: query
+          description: Start date of the date range (ISO 8601 format).
+          required: false
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          description: End date of the date range (ISO 8601 format).
+          required: false
+          schema:
+            type: string
+            format: date-time
+      responses:
+        '200':
+          description: Successfully fetched logs
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    log_timestamp:
+                      type: string
+                      format: date-time
+                    vehicle_id:
+                      type: string
+                    log_level:
+                      type: string
+                    code:
+                      type: string
+                    message:
+                      type: string
+        '400':
+          description: Bad request - Missing parameters or invalid date range.
+          content:
+            text/plain:
+              schema:
+                type: string
+        '500':
+          description: Internal server error
+          content:
+            text/plain:
+              schema:
+                type: string
+components:
+  schemas:
+    Log:
+      type: object
+      properties:
+        log_timestamp:
+          type: string
+          format: date-time
+        vehicle_id:
+          type: string
+        log_level:
+          type: string
+        code:
+          type: string
+        message:
+          type: string
