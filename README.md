@@ -14,6 +14,10 @@ Clone the repo using `git clone https://github.com/nobodyn0se/vehicle-log-backen
 
 Navigate to the root folder with `cd vehicle-log-backend`
 
+Dockerize the Cassandra DB container using `docker compose up -d`
+
+Verify that cassandra-container is up and running with `docker ps`
+
 Run `npm install`
 
 For pnpm, run `pnpm install`
@@ -23,6 +27,14 @@ Run `npm run dev` or `pnpm run dev` to start the local development server.
 ## Running unit tests
 
 Run `npm run test` to execute the unit tests.
+
+## To reset the DB and start afresh
+
+Run `docker compose down` and delete docker volume data
+
+Run `docker compose up -d`
+
+Re-run the express app
 
 ## Todos
 - Paginate the responses from the API using Cassandra pageState
