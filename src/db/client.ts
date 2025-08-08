@@ -73,11 +73,11 @@ export const populateDBIfEmpty = async (client: Client) => {
     }
 }
 
-export const updateRecordCount = async (client: Client) => {
+export const updateRecordCount = async (client: Client, incrementBy: number = 1) => {
     try {
-        await client.execute(updateCountQuery);
+        await client.execute(updateCountQuery, [incrementBy], { prepare: true });
     } catch(error) {
-        logger.error('Could not update count', error);
+        logger.error(`Could not update count by ${incrementBy}`, error);
     }
 }
 

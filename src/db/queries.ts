@@ -5,15 +5,17 @@ export const createKeySpaceQuery = `CREATE KEYSPACE IF NOT EXISTS vehicle_keyspa
 export const useKeySpaceQuery = `USE vehicle_keyspace`;
 
 export const createVehicleLogTableQuery = `CREATE TABLE IF NOT EXISTS vehicle_logs (
-    log_id uuid PRIMARY KEY,
-    log_timestamp timestamp,
-    vehicle_id text,
-    log_level text,
-    code text,
-    message text,
-    created_at timestamp,
-    updated_at timestamp,
-);
+                                                                               vehicle_id text,
+                                                                               code text,
+                                                                               log_timestamp timestamp,
+                                                                               log_id uuid,
+                                                                               log_level text,
+                                                                               message text,
+                                                                               created_at timestamp,
+                                                                               updated_at timestamp,
+                                                                               PRIMARY KEY ((vehicle_id, code), log_timestamp, log_id)
+    ) WITH CLUSTERING ORDER BY (log_timestamp DESC, log_id ASC);
+
 `;
 
 export const baseSearchQuery = 'SELECT log_timestamp, vehicle_id, log_level, code, message from vehicle_logs WHERE ';
@@ -22,6 +24,6 @@ export const getCountQuery = `SELECT count_value from vehicle_logs_count where k
 
 export const initCountRowQuery = `UPDATE vehicle_logs_count SET count_value = count_value + 0 WHERE key = 'count'`;
 
-export const updateCountQuery = `UPDATE vehicle_logs_count SET count_value = count_value + 1 where key = 'count'`;
+export const updateCountQuery = `UPDATE vehicle_logs_count SET count_value = count_value + ? WHERE key = 'count'`;
 
 export const createCountTableQuery = `CREATE TABLE IF NOT EXISTS vehicle_logs_count (key text primary key, count_value counter);`
